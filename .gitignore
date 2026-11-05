@@ -1,0 +1,20 @@
+node_modules
+dist
+*.tgz
+*.tsbuildinfo
+*.log
+.DS_Store
+.eslintcache
+.idea
+/.vscode/
+
+# Local Convex deployment and secrets
+.convex
+.env
+.env.*
+!.env.example
+
+# Local agent skills (npx convex ai-files install)
+.agents/
+.claude/
+skills-lock.json

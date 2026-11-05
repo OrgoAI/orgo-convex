@@ -1,0 +1,112 @@
+{
+  "name": "orgo-convex",
+  "description": "Orgo cloud computers for Convex: create computers, run commands and Python, take screenshots and move files, with state in reactive Convex tables.",
+  "repository": "github:OrgoAI/orgo-convex",
+  "homepage": "https://github.com/OrgoAI/orgo-convex#readme",
+  "bugs": {
+    "url": "https://github.com/OrgoAI/orgo-convex/issues"
+  },
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Orgo",
+  "keywords": [
+    "convex",
+    "component",
+    "orgo",
+    "computer",
+    "sandbox",
+    "virtual-machine",
+    "ai-agent",
+    "computer-use"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "convex dev --start 'npm run dev:build'",
+    "dev:frontend": "cd example && vite",
+    "dev:build": "chokidar 'tsconfig*.json' 'src/**/*.ts' -i '**/*.test.ts' -c 'npm run build:codegen' --initial",
+    "predev": "convex init && npm run build:codegen",
+    "build": "rm -rf dist *.tsbuildinfo && tsc --project ./tsconfig.build.json",
+    "build:codegen": "npx convex codegen --component-dir ./src/component && npm run build",
+    "typecheck": "tsc --noEmit && tsc -p example && tsc -p example/convex",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --typecheck",
+    "test:watch": "vitest --typecheck --clearScreen false",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text",
+    "prepare": "npm run build",
+    "preversion": "npm ci && ./scripts/verify",
+    "alpha": "npm version prerelease --preid alpha && git push --follow-tags",
+    "release": "npm version patch && git push --follow-tags",
+    "version": "prettier -w CHANGELOG.md && git add CHANGELOG.md",
+    "verify": "./scripts/verify",
+    "check:pack": "node scripts/check-pack.mjs",
+    "prepublishOnly": "npm run build && npm run check:pack",
+    "test:live": "node scripts/live-test.mjs"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.ts",
+    "!src/fixtures",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSE-APACHE-2.0"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
+    },
+    "./test": "./src/test.ts",
+    "./_generated/component.js": {
+      "types": "./dist/component/_generated/component.d.ts"
+    },
+    "./_generated/component": {
+      "types": "./dist/component/_generated/component.d.ts"
+    },
+    "./convex.config.js": {
+      "types": "./dist/component/convex.config.d.ts",
+      "default": "./dist/component/convex.config.js"
+    },
+    "./convex.config": {
+      "types": "./dist/component/convex.config.d.ts",
+      "default": "./dist/component/convex.config.js"
+    }
+  },
+  "peerDependencies": {
+    "convex": "^1.43.0"
+  },
+  "devDependencies": {
+    "@convex-dev/eslint-plugin": "^5.0.1",
+    "@edge-runtime/vm": "^5.0.0",
+    "@eslint/eslintrc": "^3.3.6",
+    "@eslint/js": "9.39.5",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@vitejs/plugin-react": "^6.0.5",
+    "chokidar-cli": "3.0.0",
+    "convex": "^1.49.0",
+    "convex-test": "0.0.66",
+    "eslint": "9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.9.0",
+    "prettier": "3.9.10",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "4.1.12"
+  },
+  "types": "./dist/client/index.d.ts",
+  "module": "./dist/client/index.js"
+}

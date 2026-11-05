@@ -1,0 +1,17 @@
+# gitleaks configuration: the default rules, plus one narrow allowlist.
+# The tests feed the component fake keys on purpose, to prove it never
+# leaks them. Only these exact fake values are ignored, and only in test
+# and fixture files: a real key anywhere, including in a test, still fails.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Deliberately fake keys used by the redaction tests"
+condition = "AND"
+paths = ['''^src/(component/[^/]+\.test\.ts|fixtures/[^/]+\.ts)$''']
+regexes = [
+  '''^sk_live_abcdefghijkl(mnop)?$''',
+  '''^plain-key-0123456789$''',
+  '''^a1b2c3d4e5f6a7b8c9d0e1f2$''',
+  '''^sk_test_SENTINEL_api_key_0123456789$''',
+]
