@@ -1,6 +1,6 @@
 {
   "name": "orgo-convex",
-  "description": "Orgo cloud computers for Convex: create computers, run commands and Python, take screenshots and move files, with state in reactive Convex tables.",
+  "description": "Give your Convex agents a computer: Orgo's Linux and Windows desktops, with commands, Python, screenshots and files in reactive tables.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OrgoAI/orgo-convex.git"

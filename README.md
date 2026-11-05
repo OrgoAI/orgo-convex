@@ -6,10 +6,10 @@
 
 <!-- START: Include on https://convex.dev/components -->
 
-Give your Convex backend real cloud computers. This component creates [Orgo](https://www.orgo.ai)
-computers (full Linux or Windows desktops), runs shell commands and Python on them, takes
-screenshots and moves files, and keeps every computer and every run in reactive Convex tables your
-UI can subscribe to.
+Give your agents a computer. Each [Orgo](https://www.orgo.ai) computer is an isolated virtual
+machine with a full Linux or Windows desktop, a browser, a terminal and a disk that persists. This
+component drives them from your Convex actions and keeps every computer and every run in reactive
+tables your UI can subscribe to.
 
 ```ts
 // convex/agent.ts
@@ -35,15 +35,15 @@ export const analyze = action({
 });
 ```
 
-Why a component instead of calling Orgo's API yourself:
-
-- **Reactive state.** Computers and runs live in the component's tables. Show "running…", exit codes
-  and history from live queries instead of polling.
+- **Computers.** Create, start, stop and delete. Stopping keeps the disk.
+- **Commands and Python.** Output, exit codes, timeouts and a full run history.
+- **Screenshots.** The screen as PNG bytes, ready for computer-use models.
+- **Files.** Upload and export, up to 10 MiB each.
+- **Live state.** Show "running…", exit codes and history from queries instead of polling.
 - **Safe by default.** Each computer belongs to a `userKey` your server derives from the signed-in
-  user; every read and action checks it before anything reaches Orgo. Credentials Orgo returns (VNC
-  passwords, connection tokens, signed links) never reach a table, a return value or an error.
-  Deleting computers is off until you turn it on.
-- **Small and dependency-free.** Plain `fetch` in Convex's default runtime: no `"use node"`, no SDK.
+  user, checked before anything reaches Orgo. Passwords, tokens and signed links Orgo returns never
+  reach a table, a return value or an error. Deleting is off until you turn it on.
+- **No dependencies.** Plain `fetch` in Convex's default runtime: no SDK, no `"use node"`.
 
 <!-- END: Include on https://convex.dev/components -->
 
