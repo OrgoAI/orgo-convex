@@ -1,5 +1,7 @@
 # Orgo for Convex
 
+![Orgo for Convex: computers for agents](.github/assets/banner.png)
+
 [![npm version](https://img.shields.io/npm/v/orgo-convex)](https://www.npmjs.com/package/orgo-convex)
 
 <!-- START: Include on https://convex.dev/components -->
