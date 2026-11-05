@@ -1,0 +1,42 @@
+name: Release
+# Publishes to npm with provenance when a v* tag is pushed. Uses npm trusted
+# publishing (OIDC): no npm token is stored in this repository. It does
+# nothing until the package's npm settings trust this repository and this
+# workflow file (see PUBLISHING.md).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Tag matches package.json
+        run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+
+      - name: Install
+        run: npm ci
+
+      - name: Verify
+        run: ./scripts/verify
+
+      - name: Publish
+        run: |
+          # Prereleases (0.2.0-alpha.1) go to the alpha tag, releases to latest.
+          tag=$(node -p 'require("./package.json").version.includes("-") ? "alpha" : "latest"')
+          npm publish --provenance --access public --tag "$tag"
