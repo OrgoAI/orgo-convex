@@ -47,24 +47,33 @@ export const analyze = action({
 
 <!-- END: Include on https://convex.dev/components -->
 
-## Installation
+## Setup
+
+### 1. Install
 
 ```bash
 npm install orgo-convex
 ```
 
-Create an API key at [orgo.ai/settings/credentials](https://www.orgo.ai/settings/credentials) (API
-keys → New key; a key scoped to one workspace is enough) and set it on your deployment, with the
-workspace your computers should live in (`GET https://www.orgo.ai/api/workspaces` lists your
-workspaces and their ids):
+### 2. Add your Orgo key
+
+Create a key at [orgo.ai/settings/credentials](https://www.orgo.ai/settings/credentials) (API keys →
+New key) and set it on your deployment, with the workspace your computers should live in:
 
 ```bash
 npx convex env set ORGO_API_KEY sk_live_...
-npx convex env set ORGO_WORKSPACE_ID <workspace id>   # read by your own code, as above
+npx convex env set ORGO_WORKSPACE_ID <workspace id>
 ```
 
-Components cannot read your app's environment variables, so pass the key down in
-`convex/convex.config.ts`:
+To find your workspace ids:
+
+```bash
+curl -s https://www.orgo.ai/api/workspaces -H "Authorization: Bearer sk_live_..."
+```
+
+### 3. Register the component
+
+Components cannot read your app's environment variables, so pass the key down:
 
 ```ts
 // convex/convex.config.ts
@@ -72,21 +81,21 @@ import { defineApp } from "convex/server";
 import { v } from "convex/values";
 import orgo from "orgo-convex/convex.config.js";
 
-const app = defineApp({
-  env: { ORGO_API_KEY: v.string(), ORGO_API_URL: v.optional(v.string()) },
-});
-app.use(orgo, {
-  env: { ORGO_API_KEY: app.env.ORGO_API_KEY, ORGO_API_URL: app.env.ORGO_API_URL },
-});
+const app = defineApp({ env: { ORGO_API_KEY: v.string() } });
+app.use(orgo, { env: { ORGO_API_KEY: app.env.ORGO_API_KEY } });
+
 export default app;
 ```
 
-The key is passed by reference, so rotating it needs no redeploy, and it never travels in function
-arguments. `ORGO_API_URL` is optional: an origin such as `https://www.orgo.ai` (the default),
-without `/api`. You can install the component under another name with
-`app.use(orgo, { name: "computers", env })` and pass `components.computers` to the client.
+### 4. Use it
 
-Requires `convex` 1.43 or later.
+Run `npx convex dev`, then call the client from any action, as in the example at the top.
+
+Requires `convex` 1.43 or later. The key is passed by reference, so rotating it needs no redeploy,
+and it never travels in function arguments. To use another Orgo origin, also pass
+`ORGO_API_URL: v.optional(v.string())` the same way (an origin such as `https://www.orgo.ai`,
+without `/api`). To install the component under another name, use
+`app.use(orgo, { name: "computers", env })` and pass `components.computers` to the client.
 
 ## Usage
 
