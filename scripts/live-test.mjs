@@ -10,10 +10,18 @@
 // Optional: ORGO_API_URL for a non-production Orgo origin.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 
 const { ORGO_API_KEY, ORGO_WORKSPACE_ID, ORGO_API_URL } = process.env;
 if (!ORGO_API_KEY || !ORGO_WORKSPACE_ID) {
   console.error("Set ORGO_API_KEY and ORGO_WORKSPACE_ID (a scratch workspace).");
+  process.exit(2);
+}
+const configured =
+  process.env.CONVEX_DEPLOYMENT ||
+  (existsSync(".env.local") && readFileSync(".env.local", "utf8").includes("CONVEX_DEPLOYMENT="));
+if (!configured) {
+  console.error("No Convex deployment yet: run `npx convex dev --once` first.");
   process.exit(2);
 }
 const origin = ORGO_API_URL || "https://www.orgo.ai";
@@ -209,31 +217,15 @@ try {
   });
   check("Orgo answers 404 for the deleted computer", res.status === 404, res.status);
 
-  console.log("Tables");
-  const tables =
-    convex([
-      "data",
-      "computers",
-      "--component",
-      "orgo",
-      "--limit",
-      "1000",
-      "--format",
-      "jsonLines",
-    ]) +
-    convex([
-      "data",
-      "executions",
-      "--component",
-      "orgo",
-      "--limit",
-      "1000",
-      "--format",
-      "jsonLines",
-    ]);
+  console.log("Stored rows");
+  // Every stored field comes back through get and listExecutions (the
+  // computer's tombstone included), so scanning them scans the tables.
+  const tombstone = run("get", owned);
+  check("the deleted computer stays as a tombstone", tombstone?.status === "deleted", tombstone);
+  const stored = JSON.stringify([tombstone, run("listExecutions", owned)]);
   check(
-    "component tables hold no credentials or links",
-    !/vnc|password|desktopApiToken|sk_live|https?:\/\//i.test(tables),
+    "stored rows hold no credentials or links",
+    !/vnc|password|desktopApiToken|sk_live|https?:\/\//i.test(stored),
   );
 } finally {
   if (!deleted) {
